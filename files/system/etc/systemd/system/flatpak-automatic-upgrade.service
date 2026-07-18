@@ -1,0 +1,9 @@
+[Unit]
+Description=Automated System Flatpak Deployment Engine
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/flatpak update --system --noninteractive -y
+ExecStartPost=/usr/bin/flatpak uninstall --system --unused --noninteractive -y

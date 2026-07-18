@@ -3,7 +3,7 @@ name: fedora-silverblue-bluebuild
 description: Core Ultra 5 x86-64-v3 Hyper-Optimized System Engine.
 
 base-image: ghcr.io/ublue-os/silverblue-main
-image-version: 44 # Fedora 44 release tracking
+image-version: 44
 
 modules:
   - type: files
@@ -13,32 +13,31 @@ modules:
 
   - type: dnf
     repos:
-      copr:
-        - bieszczaders/kernel-cachyos-addons # Sched-ext eBPF scheduling tools
+      # Enable standard and non-free RPM Fusion channels during image compilation
+      - https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-%OS_VERSION%.noarch.rpm
+      - https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-%OS_VERSION%.noarch.rpm
     install:
-      packages:
-        - scx-scheds                         # Sched-ext eBPF schedulers (including scx_lavd)
-        - scx-tools                          # Scheduler management tools (provides scx_loader.service)
-        - fastfetch                          # Layered CLI system-monitoring tool
+      - intel-media-driver        # Modern Intel VA-API driver for Core Ultra QuickSync
+      - libva-utils               # Verification diagnostics (provides vainfo)
+      - gstreamer1-vaapi          # GStreamer hardware translation layer
+      - intel-gpu-tools           # GPU monitoring utilities (provides intel_gpu_top)
+      - fastfetch
     remove:
-      packages:
-        - firefox
-        - firefox-langpacks
-        - gnome-tour
-        - yelp
-        - gnome-user-docs
-        - rygel
+      - firefox
+      - firefox-langpacks
+      - gnome-tour
+      - yelp
+      - gnome-user-docs
+      - rygel
 
   - type: kargs
     kargs:
-      - xe.force_probe=*            # Forces modern Xe graphic driver for Intel Arc GPU
-      - nmi_watchdog=0              # Stop CPU non-maskable hardware interrupts
-      - nowatchdog                  # Disable internal hardware hang check timers
-      - rcutree.rcu_idle_gp_delay=4 # Group CPU wake intervals to extend C-states
-      - pcie_aspm=force             # Force active-state PCIe lane power management
-      - nvme.noacpi=1               # Override buggy firmware APST states
-      - ahci.mobile_lpm_policy=3    # Drive AHCI bus link power to lowest sleep level
-      - intel_pstate=active         # Native Intel HWP active driver
+      - xe.force_probe=*            
+      - nmi_watchdog=0              
+      - nowatchdog                  
+      - rcutree.rcu_idle_gp_delay=4 
+      - intel_pstate=active         
+      - split_lock_detect=off       # Prevents performance degradation from split-lock execution
       - quiet
       - splash
 
@@ -48,7 +47,10 @@ modules:
         - intel_lpmd.service          
         - thermald.service
         - disable-usb-wakeups.service
-        - scx_loader.service          # Automated eBPF scheduling launcher
+        - flatpak-automatic-upgrade.service
+        - scx-power-init.service     # Initializes context-aware scheduling
+      disabled:
+        - NetworkManager-wait-online.service 
 
   - type: default-flatpaks
     configurations:
@@ -60,5 +62,11 @@ modules:
           - com.brave.Browser
           - com.mattjakeman.ExtensionManager
       - scope: user
+
+  - type: script
+    scripts:
+      - compile-schemas.sh
+      - lpmd-multimodel.sh
+      - setup-permissions.sh
 
   - type: signing

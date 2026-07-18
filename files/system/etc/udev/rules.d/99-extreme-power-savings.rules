@@ -1,8 +1,8 @@
-# Enable runtime power management dynamically for all PCIe interfaces
+# Dynamically enable PCIe ASPM and suspend across devices
 ACTION=="add", SUBSYSTEM=="pci", ATTR{power/control}="auto"
 
-# Force autosuspend across all USB physical interfaces
-ACTION=="add", SUBSYSTEM=="usb", ATTR{power/control}="auto"
+# Safe NVMe controller power management
+ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x144d", ATTR{power/control}="auto"
 
-# Set SATA storage link power management to the lowest active power state
-ACTION=="add", SUBSYSTEM=="scsi_host", KERNEL=="host*", ATTR{link_power_management_policy}="med_power_with_dipm"
+# Dynamic autosuspend on safe, non-interactive USB sub-classes
+ACTION=="add", SUBSYSTEM=="usb", ATTR{bDeviceClass}!="03", ATTR{power/control}="auto"

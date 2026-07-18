@@ -4,7 +4,6 @@ After=multi-user.target
 
 [Service]
 Type=oneshot
-# Disable GLAN (Gigabit Ethernet) and XHC (USB 3.0 controllers) from triggering system wakeups
 ExecStart=/bin/sh -c "for device in XHC GLAN; do if grep -q ENABLED /proc/acpi/wakeup; then echo $device > /proc/acpi/wakeup; fi; done"
 RemainAfterExit=yes
 

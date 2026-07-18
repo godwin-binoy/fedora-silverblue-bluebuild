@@ -1,4 +1,14 @@
 # Force multithreaded GL state compilation
 mesa_glthread=true
+
 # Skip clear commands for GPU shader cache on termination
 __GL_SHADER_DISK_CACHE_SKIP_CLEANUP=1
+
+# Force driver detection for Intel QuickSync hardware decoding
+LIBVA_DRIVER_NAME=iHD
+
+# Maximize Vulkan pipeline memory caching to prevent interface micro-stuttering
+MESA_SHADER_CACHE_MAX_SIZE=8G
+
+# Permit Flatpak web browsers to safely map GPU video decoding pipelines
+MOZ_DISABLE_RDD_SANDBOX=1

@@ -1,0 +1,12 @@
+[Unit]
+Description=Initialize eBPF Sched-Ext Power Alignment
+After=multi-user.target scx_loader.service
+Wants=scx_loader.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/scx-power-switch.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

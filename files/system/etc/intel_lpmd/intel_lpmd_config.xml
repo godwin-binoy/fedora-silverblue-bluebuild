@@ -7,7 +7,6 @@
     <PowersaverDef>1</PowersaverDef>
     <HfiLpmEnable>1</HfiLpmEnable>
     <HfiSuvEnable>1</HfiSuvEnable>
-    <!-- Keep background tasks on LPE cores, but wake normal E-cores much sooner for UI interactions -->
     <util_entry_threshold>30</util_entry_threshold> 
     <util_exit_threshold>55</util_exit_threshold>  
 </Configuration>
