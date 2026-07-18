@@ -49,7 +49,7 @@ modules:
         - espeak-ng
 
   - type: kargs
-    arguments:
+    kargs:
       - xe.force_probe=*            # Forces modern Xe graphic driver for Intel Arc GPU
       - nmi_watchdog=0              # Stop CPU non-maskable hardware interrupts
       - nowatchdog                 # Disable internal hardware hang check timers
@@ -67,7 +67,7 @@ modules:
         - intel-lpmd.service
         - thermald.service
         - disable-usb-wakeups.service
-        - scx.service               # Automated eBPF scheduling launcher
+        - scx.service                 # Automated eBPF scheduling launcher
       disabled:
         - geoclue.service
         - cups.service
