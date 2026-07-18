@@ -33,7 +33,6 @@ modules:
 
   - type: script
     scripts:
-      - setup-kernel.sh
       - script.sh
 
   - type: kargs
