@@ -18,8 +18,8 @@ modules:
     install:
       packages:
         - scx-scheds                         # Sched-ext eBPF schedulers (including scx_lavd)
-        - scx-tools                          # Scheduler management tools
-        - fastfetch                          # Layered CLI system-monitoring tool [1.3]
+        - scx-tools                          # Scheduler management tools (provides scx_loader.service)
+        - fastfetch                          # Layered CLI system-monitoring tool
     remove:
       packages:
         - firefox
@@ -45,10 +45,10 @@ modules:
   - type: systemd
     system:
       enabled:
-        - intel_lpmd.service          # FIXED: Changed from hyphen to underscore
+        - intel_lpmd.service          
         - thermald.service
         - disable-usb-wakeups.service
-        - scx.service                 # Automated eBPF scheduling launcher
+        - scx_loader.service          # FIXED: Swapped out legacy service for modern loader
       disabled:
         - geoclue.service
         - cups.service
