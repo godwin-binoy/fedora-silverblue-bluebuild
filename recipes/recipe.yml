@@ -40,7 +40,7 @@ modules:
     kargs:
       - xe.force_probe=*            # Forces modern Xe graphic driver for Intel Arc GPU
       - nmi_watchdog=0              # Stop CPU non-maskable hardware interrupts
-      - nowatchdog                 # Disable internal hardware hang check timers
+      - nowatchdog                  # Disable internal hardware hang check timers
       - rcutree.rcu_idle_gp_delay=4 # Group CPU wake intervals to extend C-states
       - pcie_aspm=force             # Force active-state PCIe lane power management
       - nvme.noacpi=1               # Override buggy firmware APST states
@@ -70,6 +70,6 @@ modules:
           - org.gnome.Loupe
           - com.brave.Browser
           - com.mattjakeman.ExtensionManager
-       - scope: user
+      - scope: user
 
   - type: signing
