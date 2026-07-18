@@ -1,5 +1,5 @@
-# Drop core scaling voltage request to 'power' on battery (stops aggressive frequency spikes)
-SUBSYSTEM=="power_supply", ATTR{online}=="0", RUN+="/bin/sh -c 'echo power | tee /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference'"
+# Drop CPU to 'balance_power' on battery to keep UI fluid while saving power
+SUBSYSTEM=="power_supply", ATTR{online}=="0", RUN+="/bin/sh -c 'echo balance_power | tee /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference'"
 
-# Restore core scaling voltage to 'balance_performance' on AC power
+# Restore to 'balance_performance' on AC
 SUBSYSTEM=="power_supply", ATTR{online}=="1", RUN+="/bin/sh -c 'echo balance_performance | tee /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference'"
