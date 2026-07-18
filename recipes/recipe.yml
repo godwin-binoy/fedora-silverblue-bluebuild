@@ -48,11 +48,7 @@ modules:
         - intel_lpmd.service          
         - thermald.service
         - disable-usb-wakeups.service
-        - scx_loader.service          # FIXED: Swapped out legacy service for modern loader
-      disabled:
-        - geoclue.service
-        - cups.service
-        - power-profiles-daemon.service # Block conflicting power profiles daemon
+        - scx_loader.service          # Automated eBPF scheduling launcher
 
   - type: default-flatpaks
     configurations:
