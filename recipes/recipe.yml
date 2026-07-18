@@ -1,57 +1,53 @@
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
 name: fedora-silverblue-bluebuild
 description: Core Ultra 5 x86-64-v3 Hyper-Optimized System Engine.
-
 base-image: ghcr.io/ublue-os/silverblue-main
 image-version: 44
-
 modules:
   - type: files
     files:
       - source: system
         destination: /
-
   - type: dnf
-    repos:
-      # Enable standard and non-free RPM Fusion channels during image compilation
-      - https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-%OS_VERSION%.noarch.rpm
-      - https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-%OS_VERSION%.noarch.rpm
     install:
-      - intel-media-driver        # Modern Intel VA-API driver for Core Ultra QuickSync
-      - libva-utils               # Verification diagnostics (provides vainfo)
-      - gstreamer1-vaapi          # GStreamer hardware translation layer
-      - intel-gpu-tools           # GPU monitoring utilities (provides intel_gpu_top)
-      - fastfetch
+      packages:
+        - intel-media-driver
+        - libva-utils
+        - gstreamer1-vaapi
+        - intel-gpu-tools
+        - fastfetch
     remove:
-      - firefox
-      - firefox-langpacks
-      - gnome-tour
-      - yelp
-      - gnome-user-docs
-      - rygel
-
+      packages:
+        - firefox
+        - firefox-langpacks
+        - gnome-tour
+        - yelp
+        - gnome-user-docs
+        - rygel
   - type: kargs
     kargs:
-      - xe.force_probe=*            
-      - nmi_watchdog=0              
-      - nowatchdog                  
-      - rcutree.rcu_idle_gp_delay=4 
-      - intel_pstate=active         
-      - split_lock_detect=off       # Prevents performance degradation from split-lock execution
+      - xe.force_probe=*
+      - nmi_watchdog=0
+      - nowachtdog
+      - rcutree.rcu_idle_gp_delay=4
+      - intel_pstate=active
+      - split_lock_detect=off
       - quiet
       - splash
-
+      - preempt=lazy
+      - workqueue.power_efficient=y
+      - xe.guc_log_level=0
+      - pcie_aspm=force
   - type: systemd
     system:
       enabled:
-        - intel_lpmd.service          
+        - intel_lpmd.service
         - thermald.service
         - disable-usb-wakeups.service
-        - flatpak-automatic-upgrade.service
-        - scx-power-init.service     # Initializes context-aware scheduling
+        - flatpak-automatic-upgrade.timer
+        - scx-power-init.service
       disabled:
-        - NetworkManager-wait-online.service 
-
+        - NetworkManager-wait-online.service
   - type: default-flatpaks
     configurations:
       - notify: false
@@ -61,12 +57,14 @@ modules:
           - org.gnome.Loupe
           - com.brave.Browser
           - com.mattjakeman.ExtensionManager
+        overrides:
+          global:
+            - --device=dri
+            - --socket=wayland
       - scope: user
-
   - type: script
     scripts:
       - compile-schemas.sh
       - lpmd-multimodel.sh
       - setup-permissions.sh
-
   - type: signing

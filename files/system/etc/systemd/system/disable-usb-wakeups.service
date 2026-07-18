@@ -4,7 +4,7 @@ After=multi-user.target
 
 [Service]
 Type=oneshot
-ExecStart=/bin/sh -c "for device in XHC GLAN; do if grep -q ENABLED /proc/acpi/wakeup; then echo $device > /proc/acpi/wakeup; fi; done"
+ExecStart=/bin/sh -c "for device in XHC GLAN; do if grep -iq enabled /proc/acpi/wakeup; then echo $device > /proc/acpi/wakeup; fi; done"
 RemainAfterExit=yes
 
 [Install]

@@ -1,7 +1,4 @@
-#!/usr/bin/env bash
-set -eou pipefail
-
-# Ensure custom local binary scripts carry valid execution flags
-if [ -f "/usr/local/bin/scx-power-switch.sh" ]; then
-    chmod +x /usr/local/bin/scx-power-switch.sh
+set -euo pipefail
+if [ -f "/usr/libexec/scx-power-switch" ]; then
+    chmod +x /usr/libexec/scx-power-switch
 fi

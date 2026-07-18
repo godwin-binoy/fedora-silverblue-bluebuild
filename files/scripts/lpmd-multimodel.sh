@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -eou pipefail
+set -euo pipefail
 
 # Clone custom LPMD parameters to all known Core Ultra / Meteor Lake platform configurations
 TARGET_DIR="/etc/intel_lpmd"

@@ -1,0 +1,30 @@
+#!/bin/bash
+set -euo pipefail
+
+# 1. Gracefully exit if the booted kernel lacks sched-ext (eBPF) support
+if [ ! -d "/sys/kernel/sched_ext" ]; then
+    echo "sched-ext is not supported by the current kernel. Skipping scheduler tuning."
+    exit 0
+fi
+
+# 2. Discover AC adapter state across various vendor interfaces (AC0, ADP0, ACAD, etc.)
+ONLINE=1
+for psu in /sys/class/power_supply/*; do
+    if [ -f "$psu/type" ] && [ "$(cat "$psu/type")" = "Mains" ]; then
+        if [ -f "$psu/online" ]; then
+            ONLINE=$(cat "$psu/online")
+            break
+        fi
+    fi
+done
+
+# 3. Securely toggle sched-ext scheduler with no-block flags to prevent systemd deadlocks
+if systemctl is-enabled scx_loader.service >/dev/null 2>&1; then
+    if [ "$ONLINE" -eq 1 ]; then
+        echo "AC Connected: Activating sched-ext performance loop."
+        systemctl start --no-block scx_loader.service || true
+    else
+        echo "Battery Power: Suspending sched-ext to utilize low-power EEVDF + LPMD."
+        systemctl stop --no-block scx_loader.service || true
+    fi
+fi

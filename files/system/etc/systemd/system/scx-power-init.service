@@ -5,7 +5,7 @@ Wants=scx_loader.service
 
 [Service]
 Type=oneshot
-ExecStart=/usr/local/bin/scx-power-switch.sh
+ExecStart=/usr/libexec/scx-power-switch
 RemainAfterExit=yes
 
 [Install]

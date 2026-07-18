@@ -1,2 +1,2 @@
 # Trigger the scheduler switch script immediately when the power cable is pulled or connected
-SUBSYSTEM=="power_supply", ACTION=="change", RUN+="/usr/local/bin/scx-power-switch.sh"
+SUBSYSTEM=="power_supply", ACTION=="change", RUN+="/usr/libexec/scx-power-switch"
