@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
-name: fedora-silverblue-bluebuild
+name: fedora-bluebuild
 description: Core Ultra 5 x86-64-v3 Hyper-Optimized System Engine.
 
 base-image: ghcr.io/ublue-os/silverblue-main
@@ -20,17 +20,11 @@ modules:
       packages:
         - kernel-cachyos                     # Replaces standard Fedora kernel
         - kernel-cachyos-devel-matched       # Header matching for modules
-        - scx-scheds                         # Correct Package: Sched-ext schedulers
-        - scx-tools                          # Correct Package: Scheduler management tools
-        - intel-lpmd                         # Low Power Mode Daemon
-        - thermald                           # Intel thermal profile limits
-        - intel-media-driver                 # HW Video acceleration runtime
-        - libva-intel-driver
-        - libva-utils
+        - scx-scheds                         # Sched-ext schedulers
+        - scx-tools                          # Scheduler management tools
         - fastfetch                          # Layered CLI system-monitoring tool
     remove:
       packages:
-        # Streamlined safe top-level user-space applications
         - firefox
         - firefox-langpacks
         - gnome-tour
