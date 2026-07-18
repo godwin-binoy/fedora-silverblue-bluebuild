@@ -20,33 +20,23 @@ modules:
       packages:
         - kernel-cachyos                     # Replaces standard Fedora kernel
         - kernel-cachyos-devel-matched       # Header matching for modules
-        - sched-ext-scx                      # eBPF scheduler control binaries
+        - scx-scheds                         # Correct Package: Sched-ext schedulers
+        - scx-tools                          # Correct Package: Scheduler management tools
         - intel-lpmd                         # Low Power Mode Daemon
         - thermald                           # Intel thermal profile limits
         - intel-media-driver                 # HW Video acceleration runtime
         - libva-intel-driver
         - libva-utils
+        - fastfetch                          # Layered CLI system-monitoring tool
     remove:
       packages:
-        - abrt
-        - abrt-cli
-        - abrt-desktop
-        - abrt-addon-ccpp
-        - abrt-addon-kerneloops
-        - abrt-addon-pstoreoops
-        - abrt-addon-xorg
-        - abrt-libs
-        - geoclue2
-        - geoclue2-libs
+        # Streamlined safe top-level user-space applications
         - firefox
         - firefox-langpacks
         - gnome-tour
         - yelp
-        - yelp-libs
         - gnome-user-docs
         - rygel
-        - speech-dispatcher
-        - espeak-ng
 
   - type: kargs
     kargs:
@@ -80,6 +70,8 @@ modules:
         install:
           - org.mozilla.firefox
           - org.gnome.Loupe
+          - com.brave.Browser
+          - com.mattjakeman.ExtensionManager
       - scope: user
 
   - type: signing
