@@ -20,7 +20,6 @@ modules:
         - scx-scheds                         # Sched-ext eBPF schedulers (including scx_lavd)
         - scx-tools                          # Scheduler management tools (provides scx_loader.service)
         - fastfetch                          # Layered CLI system-monitoring tool
-        - powertops
     remove:
       packages:
         - firefox
