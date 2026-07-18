@@ -14,13 +14,10 @@ modules:
   - type: dnf
     repos:
       copr:
-        - bieszczaders/kernel-cachyos        # CachyOS highly-optimized x86-64-v3 kernels
         - bieszczaders/kernel-cachyos-addons # Sched-ext eBPF scheduling tools
     install:
       packages:
-        - kernel-cachyos                     # The actual kernel image (required for boot)
-        - kernel-cachyos-devel-matched       # Header matching for modules
-        - scx-scheds                         # Sched-ext schedulers
+        - scx-scheds                         # Sched-ext eBPF schedulers (including scx_lavd)
         - scx-tools                          # Scheduler management tools
         - fastfetch                          # Layered CLI system-monitoring tool
     remove:
@@ -31,10 +28,6 @@ modules:
         - yelp
         - gnome-user-docs
         - rygel
-
-  - type: script
-    scripts:
-      - script.sh                            # Triggers our custom post-install script
 
   - type: kargs
     kargs:
