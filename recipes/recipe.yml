@@ -31,10 +31,6 @@ modules:
         - gnome-user-docs
         - rygel
 
-  - type: script
-    scripts:
-      - script.sh
-
   - type: kargs
     kargs:
       - xe.force_probe=*            # Forces modern Xe graphic driver for Intel Arc GPU
