@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
-name: fedora-bluebuild
+name: fedora-silverblue-bluebuild
 description: Core Ultra 5 x86-64-v3 Hyper-Optimized System Engine.
 
 base-image: ghcr.io/ublue-os/silverblue-main
