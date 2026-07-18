@@ -19,7 +19,7 @@ modules:
       packages:
         - scx-scheds                         # Sched-ext eBPF schedulers (including scx_lavd)
         - scx-tools                          # Scheduler management tools
-        - fastfetch                          # Layered CLI system-monitoring tool
+        - fastfetch                          # Layered CLI system-monitoring tool [1.3]
     remove:
       packages:
         - firefox
@@ -45,7 +45,7 @@ modules:
   - type: systemd
     system:
       enabled:
-        - intel-lpmd.service
+        - intel_lpmd.service          # FIXED: Changed from hyphen to underscore
         - thermald.service
         - disable-usb-wakeups.service
         - scx.service                 # Automated eBPF scheduling launcher
