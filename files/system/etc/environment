@@ -1,0 +1,4 @@
+# Force multithreaded GL state compilation
+mesa_glthread=true
+# Skip clear commands for GPU shader cache on termination
+__GL_SHADER_DISK_CACHE_SKIP_CLEANUP=1

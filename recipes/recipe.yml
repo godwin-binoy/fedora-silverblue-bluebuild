@@ -1,45 +1,85 @@
----
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
-# image will be published to ghcr.io/<user>/<name>
-name: fedora-bluebuild
-# description will be included in the image's metadata
-description: This is my personal OS image.
+name: fedora-silverblue-bluebuild
+description: Core Ultra 5 x86-64-v3 Hyper-Optimized System Engine.
 
-# the base image to build on top of (FROM) and the version tag to use
 base-image: ghcr.io/ublue-os/silverblue-main
-image-version: 42 # latest is also supported if you want new updates ASAP
+image-version: 44 # Fedora 44 release tracking
 
-# module configuration, executed in order
-# you can include multiple instances of the same module
 modules:
   - type: files
     files:
       - source: system
-        destination: / # copies files/system/* (* means everything inside it) into your image's root folder /
+        destination: /
 
   - type: dnf
     repos:
       copr:
-        - atim/starship
+        - bieszczaders/kernel-cachyos        # CachyOS highly-optimized x86-64-v3 kernels
+        - bieszczaders/kernel-cachyos-addons # Sched-ext eBPF scheduling tools
     install:
       packages:
-        - micro
-        - starship
+        - kernel-cachyos                     # Replaces standard Fedora kernel
+        - kernel-cachyos-devel-matched       # Header matching for modules
+        - sched-ext-scx                      # eBPF scheduler control binaries
+        - intel-lpmd                         # Low Power Mode Daemon
+        - thermald                           # Intel thermal profile limits
+        - intel-media-driver                 # HW Video acceleration runtime
+        - libva-intel-driver
+        - libva-utils
     remove:
       packages:
-        # example: removing firefox (in favor of the flatpak)
-        # "firefox" is the main package, "firefox-langpacks" is a dependency
+        - abrt
+        - abrt-cli
+        - abrt-desktop
+        - abrt-addon-ccpp
+        - abrt-addon-kerneloops
+        - abrt-addon-pstoreoops
+        - abrt-addon-xorg
+        - abrt-libs
+        - geoclue2
+        - geoclue2-libs
         - firefox
-        - firefox-langpacks # also remove firefox dependency (not required for all packages, this is a special case)
+        - firefox-langpacks
+        - gnome-tour
+        - yelp
+        - yelp-libs
+        - gnome-user-docs
+        - rygel
+        - speech-dispatcher
+        - espeak-ng
+
+  - type: kargs
+    arguments:
+      - xe.force_probe=*            # Forces modern Xe graphic driver for Intel Arc GPU
+      - nmi_watchdog=0              # Stop CPU non-maskable hardware interrupts
+      - nowatchdog                 # Disable internal hardware hang check timers
+      - rcutree.rcu_idle_gp_delay=4 # Group CPU wake intervals to extend C-states
+      - pcie_aspm=force             # Force active-state PCIe lane power management
+      - nvme.noacpi=1               # Override buggy firmware APST states
+      - ahci.mobile_lpm_policy=3    # Drive AHCI bus link power to lowest sleep level
+      - intel_pstate=active         # Native Intel HWP active driver
+      - quiet
+      - splash
+
+  - type: systemd
+    system:
+      enabled:
+        - intel-lpmd.service
+        - thermald.service
+        - disable-usb-wakeups.service
+        - scx.service               # Automated eBPF scheduling launcher
+      disabled:
+        - geoclue.service
+        - cups.service
+        - power-profiles-daemon.service # Block conflicting power profiles daemon
 
   - type: default-flatpaks
     configurations:
-      - notify: true # Send notification after install/uninstall is finished (true/false)
+      - notify: false
         scope: system
-        # If no repo information is specified, Flathub will be used by default
-        install: # system flatpaks we want all users to have and not remove
+        install:
           - org.mozilla.firefox
           - org.gnome.Loupe
-      - scope: user # Also add Flathub user repo, but no user packages
+      - scope: user
 
-  - type: signing # this sets up the proper policy & signing files for signed images to work fully
+  - type: signing

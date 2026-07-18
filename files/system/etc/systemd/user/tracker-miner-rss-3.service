@@ -1,0 +1,5 @@
+[Unit]
+Description=Disabled File System Indexing Daemon
+[Service]
+Type=oneshot
+ExecStart=/bin/true

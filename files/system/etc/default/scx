@@ -1,0 +1,3 @@
+# Enforce the Latency-Aware Virtual Deadline (LAVD) scheduler
+# Tailored for hybrid architectures to prioritize interactive task dispatching
+SCX_SCHEDULER=scx_lavd

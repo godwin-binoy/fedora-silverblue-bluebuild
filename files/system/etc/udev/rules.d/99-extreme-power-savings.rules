@@ -1,0 +1,8 @@
+# Enable runtime power management dynamically for all PCIe interfaces
+ACTION=="add", SUBSYSTEM=="pci", ATTR{power/control}="auto"
+
+# Force autosuspend across all USB physical interfaces
+ACTION=="add", SUBSYSTEM=="usb", ATTR{power/control}="auto"
+
+# Set SATA storage link power management to the lowest active power state
+ACTION=="add", SUBSYSTEM=="scsi_host", KERNEL=="host*", ATTR{link_power_management_policy}="med_power_with_dipm"
