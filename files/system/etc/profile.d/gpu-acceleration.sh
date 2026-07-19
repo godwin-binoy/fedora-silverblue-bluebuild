@@ -1,12 +1,14 @@
 #!/bin/sh
-# Force Wayland and hardware acceleration across modern display layers
-export INTEL_BATCH=1
-export WEBKIT_DISABLE_COMPOSITING_MODE=0
-export CLUTTER_ACTOR_NO_LAYOUT=1
-export COGL_RENDERER=egl_wayland
-
-# Intel ANV Vulkan optimizations
-export ANV_QUEUE_THREAD_DISABLE=1
+# Configure hardware-accelerated video decoding APIs
+export LIBVA_DRIVER_NAME=iHD
+export VDPAU_DRIVER=va_gl
 
 # Enable multi-threaded shader compiler pipelines within Mesa drivers
 export thread_submit=true
+
+# Allow ANV Vulkan driver multi-threaded queue submit
+export ANV_QUEUE_THREAD_DISABLE=0
+
+# Modern Mesa Shader Cache optimizations to reduce disk wear & stuttering
+export MESA_SHADER_CACHE_MAX_SIZE=4G
+export MESA_DISK_CACHE_SINGLE_FILE=1
