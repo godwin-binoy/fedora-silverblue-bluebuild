@@ -1,5 +1,2 @@
-# Dynamically enable PCIe ASPM and suspend across devices
-ACTION=="add", SUBSYSTEM=="pci", ATTR{power/control}="auto"
-
-# Dynamic autosuspend on safe, non-interactive USB sub-classes
-ACTION=="add", SUBSYSTEM=="usb", ATTR{bDeviceClass}!="03", ATTR{power/control}="auto"
+# Enable autosuspend selectively on USB storage (08) and hub (09) devices
+ACTION=="add", SUBSYSTEM=="usb", ATTR{bDeviceClass}=="08"|ATTR{bDeviceClass}=="09", ATTR{power/control}="auto"

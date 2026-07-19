@@ -1,1 +1,1 @@
-ACTION=="add|change", SUBSYSTEM=="block", KERNEL=="nvme*", ATTR{queue/rotational}=="0", ATTR{device/power/control}="auto", ATTR{queue/scheduler}="kyber"
+ACTION=="add|change", SUBSYSTEM=="block", KERNEL=="nvme*", ATTR{queue/rotational}=="0", ATTR{device/power/control}="auto", ATTR{queue/scheduler}="none"

@@ -1,7 +1,6 @@
 [Unit]
 Description=Initialize eBPF Sched-Ext Power Alignment
-After=multi-user.target scx_loader.service
-Wants=scx_loader.service
+After=multi-user.target
 
 [Service]
 Type=oneshot
