@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
 name: fedora-silverblue-bluebuild
-description: Core Ultra 5 Dynamic HW-Optimized System Engine.
+description: Core Ultra Dynamic HW-Optimized System Engine.
 base-image: ghcr.io/ublue-os/silverblue-main
 image-version: 44
 modules:
@@ -38,18 +38,15 @@ modules:
       - split_lock_detect=off
       - quiet
       - splash
-      - preempt=lazy
       - workqueue.power_efficient=y
       - pcie_aspm=auto
       - iommu=pt
       - intel_iommu=on
-      - init_on_alloc=1
-      - init_on_free=1
       - page_alloc.shuffle=1
   - type: systemd
     system:
       enabled:
-        - intel_lpmd.service
+        - ultra-hardware-init.service
         - thermald.service
         - disable-usb-wakeups.service
         - flatpak-automatic-upgrade.timer
@@ -67,11 +64,10 @@ modules:
           org.mozilla.firefox:
             - --device=dri
             - --socket=wayland
+            - --env=LIBVA_DRIVER_NAME=iHD
           com.brave.Browser:
             - --device=dri
             - --socket=wayland
+            - --env=LIBVA_DRIVER_NAME=iHD
       - scope: user
-  - type: script
-    scripts:
-      - lpmd-multimodel.sh
   - type: signing
