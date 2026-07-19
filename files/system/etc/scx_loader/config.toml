@@ -1,6 +1,0 @@
-# Configuration for modern scx_loader
-default_sched = "scx_rusty"
-default_mode = "Auto"
-
-[scheds.scx_lavd]
-auto_mode = ["--performance"]

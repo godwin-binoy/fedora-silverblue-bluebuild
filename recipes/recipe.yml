@@ -9,9 +9,6 @@ modules:
       - source: system
         destination: /
   - type: dnf
-    repos:
-      copr:
-        - bieszczaders/kernel-cachyos-addons
     install:
       packages:
         - intel-media-driver
@@ -20,7 +17,6 @@ modules:
         - intel-gpu-tools
         - fastfetch
         - intel-lpmd
-        - scx-scheds
         - thermald
       skip-unavailable: true
       skip-broken: true
@@ -59,8 +55,6 @@ modules:
         - thermald.service
         - disable-usb-wakeups.service
         - flatpak-automatic-upgrade.timer
-        - scx-power-init.service
-        - scx_loader.service
       disabled:
         - NetworkManager-wait-online.service
   - type: default-flatpaks
@@ -82,5 +76,4 @@ modules:
   - type: script
     scripts:
       - lpmd-multimodel.sh
-      - setup-permissions.sh
   - type: signing
