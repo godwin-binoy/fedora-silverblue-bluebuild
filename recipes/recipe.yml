@@ -39,10 +39,12 @@ modules:
       - quiet
       - splash
       - workqueue.power_efficient=y
-      - pcie_aspm=auto
+      - pcie_aspm=force
       - iommu=pt
       - intel_iommu=on
       - page_alloc.shuffle=1
+      - snd_hda_intel.power_save=1
+      - snd_sof.dsp_power_save=1
   - type: systemd
     system:
       enabled:

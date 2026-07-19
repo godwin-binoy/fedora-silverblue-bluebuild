@@ -1,7 +1,6 @@
 [Unit]
 Description=Core Ultra Hardware Initialization and Tuning Engine
-Before=sysinit.target
-DefaultDependencies=no
+After=multi-user.target
 
 [Service]
 Type=oneshot
@@ -9,4 +8,4 @@ ExecStart=/usr/bin/ultra-hardware-init.sh
 RemainAfterExit=yes
 
 [Install]
-WantedBy=sysinit.target
+WantedBy=multi-user.target
