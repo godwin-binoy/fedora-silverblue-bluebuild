@@ -9,6 +9,9 @@ modules:
       - source: system
         destination: /
   - type: dnf
+    repos:
+      copr:
+        - bieszczaders/kernel-cachyos-addons
     install:
       packages:
         - intel-media-driver
@@ -19,6 +22,9 @@ modules:
         - intel-lpmd
         - scx-scheds
         - thermald
+      skip-unavailable: true
+      skip-broken: true
+      allow-erasing: true
     remove:
       packages:
         - firefox
@@ -41,6 +47,11 @@ modules:
       - workqueue.power_efficient=y
       - xe.guc_log_level=0
       - pcie_aspm=force
+      - iommu=pt
+      - intel_iommu=on
+      - init_on_alloc=1
+      - init_on_free=1
+      - page_alloc.shuffle=1
   - type: systemd
     system:
       enabled:
@@ -61,6 +72,7 @@ modules:
           - org.gnome.Loupe
           - com.brave.Browser
           - com.mattjakeman.ExtensionManager
+          - org.freedesktop.Platform.VAAPI.Intel
         overrides:
           global:
             - --device=dri
