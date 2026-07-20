@@ -1,0 +1,9 @@
+[Context]
+devices=dri;shm;input;
+sockets=wayland;pulseaudio;
+filesystems=/dev/accel:rw;/etc/OpenCL:ro;
+
+[Environment]
+LIBVA_DRIVER_NAME=iHD
+VDPAU_DRIVER=va_gl
+MESA_GLTHREAD=true

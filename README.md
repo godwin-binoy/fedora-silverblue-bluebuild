@@ -1,4 +1,4 @@
-# Fedora Silverblue - Intel Core Ultra Engine
+# Fedora Silverblue - BlueBuild for intel Meteor Lake, Arrow Lake, and Lunar Lake cpu architectures
 
 [![bluebuild build badge](https://github.com/godwin-binoy/fedora-silverblue-bluebuild/actions/workflows/build.yml/badge.svg)](https://github.com/godwin-binoy/fedora-silverblue-bluebuild/actions/workflows/build.yml)
 

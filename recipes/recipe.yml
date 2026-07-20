@@ -18,6 +18,9 @@ modules:
         - fastfetch
         - intel-lpmd
         - thermald
+        - intel-npu-driver
+        - onevpl-intel-gpu
+        - intel-opencl
       skip-unavailable: true
       skip-broken: true
       allow-erasing: true
@@ -39,16 +42,14 @@ modules:
       - quiet
       - splash
       - workqueue.power_efficient=y
-      - pcie_aspm=force
+      - pcie_aspm=auto
       - iommu=pt
       - intel_iommu=on
       - page_alloc.shuffle=1
-      - snd_hda_intel.power_save=1
-      - snd_sof.dsp_power_save=1
+      - intel_idle.max_cstate=10
   - type: systemd
     system:
       enabled:
-        - ultra-hardware-init.service
         - thermald.service
         - disable-usb-wakeups.service
         - flatpak-automatic-upgrade.timer
@@ -62,14 +63,6 @@ modules:
           - com.brave.Browser
           - com.mattjakeman.ExtensionManager
           - org.freedesktop.Platform.VAAPI.Intel
-        overrides:
-          org.mozilla.firefox:
-            - --device=dri
-            - --socket=wayland
-            - --env=LIBVA_DRIVER_NAME=iHD
-          com.brave.Browser:
-            - --device=dri
-            - --socket=wayland
-            - --env=LIBVA_DRIVER_NAME=iHD
+          - org.freedesktop.Platform.GL.intel-opencl
       - scope: user
   - type: signing
