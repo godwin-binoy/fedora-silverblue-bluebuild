@@ -1,69 +1,61 @@
-# Fedora Silverblue - BlueBuild for intel Meteor Lake, Arrow Lake, and Lunar Lake cpu architectures
+# Fedora Silverblue - Intel Core Ultra Engine
 
 [![bluebuild build badge](https://github.com/godwin-binoy/fedora-silverblue-bluebuild/actions/workflows/build.yml/badge.svg)](https://github.com/godwin-binoy/fedora-silverblue-bluebuild/actions/workflows/build.yml)
 
-This is a custom, hardware-optimized image of **Fedora Silverblue** built using [BlueBuild](https://blue-build.org/). It is tailored specifically for modern Intel architectures—with a focus on **Intel Core Ultra (Meteor Lake, Arrow Lake, and Lunar Lake)** platforms—to deliver balanced battery savings, lower latency, and smoother performance.
+This repository hosts a custom, hardware-optimized system image of **Fedora Silverblue** built with [BlueBuild](https://blue-build.org/). It targets modern Intel architectures—specifically **Intel Core Ultra (Meteor Lake, Arrow Lake, and Lunar Lake)** platforms—delivering minimal power draw, reduced CPU interrupts, and smooth graphic performance.
 
 ---
 
-## Why Choose This Image?
+## Direct Architectural Enhancements
 
-Standard Fedora is designed to run on almost any computer, which means it uses conservative default configurations. This image pre-configures deep system-level optimizations that typically require hours of manual tuning. 
+### 1. Unlocked Hardware Accelerations
+* **Intel VPU/NPU (Neural Processing Unit):** Integrates the `intel-npu-driver` with custom udev rules to enable local hardware-accelerated AI computations and machine learning execution for userspace frameworks.
+* **Intel QuickSync & OpenCL:** Bundles `onevpl-intel-gpu` and `intel-opencl` to provide GPU-compute and hardware video encoding pipelines.
+* **Global Flatpak Integrations:** Deploys master policies inside `/etc/flatpak/overrides/global` to enforce Wayland rendering, IPC shared memory (`shm`), direct GPU access (`dri`), and expose both the NPU (`/dev/accel`) and host OpenCL libraries to sandboxed applications.
 
-### Key Features & Optimizations
+### 2. Battery & Thermal Tuning
+* **Native PowerTOP Service:** Enforces built-in `powertop.service` tuning to auto-align device power states during boot cycles.
+* **Deepest CPU Sleep States:** Configures `intel_idle.max_cstate=10` as a kernel boot parameter, enabling your processor cores to enter their lowest power-consuming state (Package C10) during idle periods.
+* **Suppression of CPU Wake Cycles:** Extends dirty memory writeback intervals and limits logging wakeups to drop system-wide idle interrupts below 50 wakeups per second.
+* **Intel Low Power Mode Daemon (LPMD):** Utilizes `intel-lpmd` to distribute light background tasks to Intel's low-power E-cores dynamically.
+* **Thermal Control:** Runs `thermald` with native hardware feedback profiles to manage chassis temperatures.
 
-#### 1. Intel Hardware Tailoring
-* **Intel Low Power Mode Daemon (LPMD):** Pre-configured and optimized to distribute light background tasks to Intel's low-power E-cores, helping extend battery life.
-* **Thermal Management:** `thermald` is enabled by default to prevent thermal throttling and manage laptop surface temperatures.
-* **Intel Media Driver & VA-API:** Full hardware-accelerated video playback is built-in (`intel-media-driver` and `gstreamer1-vaapi`), reducing CPU usage during video streaming.
+### 3. Declarative Memory & Disk Optimization
+* **Systemd ZRAM Scaling:** Discards stateful boot-time configuration scripts. Establishes a declarative `zram-generator.conf` mapping memory to swap spaces with high-efficiency `zstd` compression.
+* **Optimized I/O Scheduler:** Implements NVMe block schedulers statically to prevent storage controller thrashing and optimize execution pipelines.
 
-#### 2. Advanced Power Savings
-* **USB & PCIe Wakeup Suppression:** Automatically blocks unnecessary USB/PCIe devices from waking your laptop up in your bag.
-* **Aggressive Audio Powersaving:** Configures sound card sleep states to reduce idle power draw.
-* **Kernel Sleep State Tuning:** PCIe Active State Power Management (`pcie_aspm=auto`) and modern P-State active rules are pre-configured in the boot arguments.
-
-#### 3. Memory & Responsiveness (Kernel Tuning)
-* **Modern Memory Allocation:** Enabled multi-size Transparent Huge Pages (mTHP) specifically bounded for Intel’s modern hybrid core layouts to reduce overhead during heavy workloads.
-* **ZRAM Memory Compression:** Uses a 1:1 memory-to-ZRAM ratio compressed with the fast `zstd` algorithm and configured with aggressive memory swapping (`swappiness=180`) to keep the system responsive even under heavy memory load.
-* **BBR Congestion Control:** Lowers network latency and improves throughput under packet loss by utilizing Google's BBR TCP congestion control scheme.
-
-#### 4. Audio & Desktop Enhancements
-* **PipeWire Tuning:** High-priority real-time audio parameters are applied to eliminate audio crackling or popping.
-* **Bluetooth Audio Boost:** High-quality Bluetooth audio codecs (SBC-XQ and mSBC) are enabled by default for cleaner wireless sound.
-* **Flatpak-First Software Strategy:** Replaces resource-heavy system-level RPM packages (like Firefox and Help documentation) with sandboxed Flatpaks. These Flatpaks are configured with system-level hardware acceleration permissions out of the box.
+### 4. Audio Pacing
+* **WirePlumber SPA-JSON Tuning:** Sets optimized ALSA buffer periods to minimize CPU interrupts during audio playback and suspends inactive sound devices after 2 seconds of silence to prevent power waste.
 
 ---
 
 ## Installation
 
-> [!WARNING]  
-> This image utilizes native container delivery mechanisms which are highly reliable but still considered experimental by the broader Fedora project. Please use at your own discretion.
-
-You can easily transition an existing Fedora Silverblue installation over to this image without losing your personal data. 
+You can transition an existing Fedora Silverblue installation over to this image without losing personal data.
 
 ### Step 1: Rebase to the Unverified Image
-First, point your system to the unverified container registry to download the image, signing keys, and security policies:
+Run this command to fetch the custom container image and align your package manager:
 
 ```bash
 rpm-ostree rebase ostree-unverified-registry:ghcr.io/godwin-binoy/fedora-silverblue-bluebuild:latest
 ```
 
-### Step 2: Reboot
-Reboot your computer to apply the initial changes:
+### Step 2: System Restart
+Reboot your system to apply initial configurations:
 
 ```bash
 systemctl reboot
 ```
 
-### Step 3: Rebase to the Signed Image
-Once rebooted, lock your system to the securely signed version of the image to ensure you only receive authentic updates:
+### Step 3: Align to the Signed Container
+Secure your system updates by locking your deployment to the verified cryptographically signed image:
 
 ```bash
 rpm-ostree rebase ostree-image-signed:docker://ghcr.io/godwin-binoy/fedora-silverblue-bluebuild:latest
 ```
 
-### Step 4: Final Reboot
-Reboot one last time to complete your installation:
+### Step 4: Final Restart
+Apply all updates and complete the setup:
 
 ```bash
 systemctl reboot
@@ -73,22 +65,11 @@ systemctl reboot
 
 ## Verification
 
-This image is digitally signed using [Sigstore Cosign](https://github.com/sigstore/cosign). You can verify the integrity of your downloaded image at any time.
+The system automatically signs this image with [Sigstore Cosign](https://github.com/sigstore/cosign). Validate the cryptographic signature at any point:
 
-1. Download the public key `cosign.pub` from this repository.
-2. Run the following command:
+1. Retrieve `cosign.pub` from the root of this repository.
+2. Execute:
 
 ```bash
 cosign verify --key cosign.pub ghcr.io/godwin-binoy/fedora-silverblue-bluebuild
 ```
-
----
-
-## Automation & Maintenance
-
-* **Updates:** The image is automatically rebuilt every day via GitHub Actions to pull in the latest Fedora security patches and package updates.
-* **Flatpak Upgrades:** A quiet systemd timer automatically checks for and updates your Flatpaks once a day, avoiding updates if you are on a metered network connection.
-
----
-
-*Customized and maintained by [@godwin-binoy](https://github.com/godwin-binoy) with help from project contributors.*
