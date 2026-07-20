@@ -48,9 +48,10 @@ modules:
       - intel_iommu=on
       - page_alloc.shuffle=1
       - intel_idle.max_cstate=10
-      # Blacklist i915 and force load xe driver for Meteor Lake GPU power gating
-      - i915.force_probe=!7d14
-      - xe.force_probe=7d14
+      # Multi-architecture Core Ultra i915 blacklist block (MTL, ARL, and LNL)
+      - i915.force_probe=!7d55,!7dd5,!7d51,!7d67,!7d41,!e20b,!e20d,!e202
+      # Multi-architecture Core Ultra xe force-probe block (MTL, ARL, and LNL)
+      - xe.force_probe=7d55,7dd5,7d51,7d67,7d41,e20b,e20d,e202
       # Allow NVMe controller to drop into PS4 deep sleep (under 5.5ms wake latency)
       - nvme_core.default_ps_max_latency_us=5500
   - type: systemd
