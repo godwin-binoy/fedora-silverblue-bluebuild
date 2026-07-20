@@ -65,6 +65,5 @@ modules:
           - com.brave.Browser
           - com.mattjakeman.ExtensionManager
           - org.freedesktop.Platform.VAAPI.Intel
-          - org.freedesktop.Platform.GL.intel-opencl
       - scope: user
   - type: signing
