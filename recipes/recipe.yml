@@ -33,11 +33,8 @@ modules:
         - yelp
         - gnome-user-docs
         - rygel
-  - type: kargs
-      - module_blacklist=i915
-      - cpuidle.governor=teo
-      - rcutree.enable_rcu_lazy=1
-      - acpi.ec_no_wakeup=1
+  - type: kargs - module_blacklist=i915 - cpuidle.governor=teo - 
+      rcutree.enable_rcu_lazy=1 - acpi.ec_no_wakeup=1
     kargs:
       - nmi_watchdog=0
       - nowatchdog

@@ -1,13 +1,7 @@
-# PCI runtime power-saving
 ACTION=="add", SUBSYSTEM=="pci", ATTR{power/control}="auto"
-# USB runtime power-saving (only if control is writable)
 ACTION=="add", SUBSYSTEM=="usb", TEST=="power/control", ATTR{power/control}="auto"
-# Immediate autosuspend for Chicony cameras (with guard)
 ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="04f2", TEST=="power/autosuspend", ATTR{power/autosuspend}="1", ATTR{power/control}="auto"
-# Immediate autosuspend for Realtek USB Bluetooth
 ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="0bda", TEST=="power/autosuspend", ATTR{power/autosuspend}="1", ATTR{power/control}="auto"
-# Realtek wireless card power saving
 ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10ec", ATTR{device}=="0xb852", ATTR{power/control}="auto"
-# NVMe I/O scheduler and PCI power control
 ACTION=="add|change", KERNEL=="nvme*", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="none"
 ACTION=="add", SUBSYSTEM=="pci", DRIVER=="nvme", ATTR{power/control}="auto"
