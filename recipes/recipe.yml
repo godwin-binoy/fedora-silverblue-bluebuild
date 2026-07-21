@@ -33,8 +33,7 @@ modules:
         - yelp
         - gnome-user-docs
         - rygel
-  - type: kargs - module_blacklist=i915 - cpuidle.governor=teo - 
-      rcutree.enable_rcu_lazy=1 - acpi.ec_no_wakeup=1
+  - type: kargs
     kargs:
       - nmi_watchdog=0
       - nowatchdog
@@ -49,22 +48,23 @@ modules:
       - intel_iommu=on
       - page_alloc.shuffle=1
       - intel_idle.max_cstate=10
-      # Multi-architecture Core Ultra i915 blacklist block (MTL, ARL, and LNL)
-      # Multi-architecture Core Ultra xe force-probe block (MTL, ARL, and LNL)
       - xe.force_probe=7d55,7dd5,7d51,7d67,7d41,e20b,e20d,e202
-      # Allow NVMe controller to drop into PS4 deep sleep (under 5.5ms wake latency)
       - nvme_core.default_ps_max_latency_us=5500
+      - module_blacklist=i915
+      - cpuidle.governor=teo
+      - rcutree.enable_rcu_lazy=1
+      - acpi.ec_no_wakeup=1
   - type: systemd
     system:
-      masked:
-        - intel-lpmd.service
-        - irqbalance.service
       enabled:
         - thermald.service
         - disable-usb-wakeups.service
         - flatpak-automatic-upgrade.timer
         - powertop.service
         - cpupower-powersave.service
+      masked:
+        - intel-lpmd.service
+        - irqbalance.service
   - type: default-flatpaks
     configurations:
       - notify: false
