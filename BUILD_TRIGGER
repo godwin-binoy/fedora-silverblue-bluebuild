@@ -1,3 +1,0 @@
-Rebuild triggered: 2026-07-18T07:06:00Z
-Fix applied: kernel-cachyos removed from DNF install
-Reason: Prevents dracut/depmod container build failures

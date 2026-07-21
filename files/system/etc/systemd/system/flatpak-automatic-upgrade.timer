@@ -1,9 +1,10 @@
 [Unit]
-Description=Daily Flatpak Automation Pipeline Timer
+Description=Weekly Flatpak Automation Pipeline Timer
 
 [Timer]
-OnCalendar=weekly
+OnCalendar=Sat 10:00
 Persistent=true
+RandomizedDelaySec=6h
 
 [Install]
 WantedBy=timers.target

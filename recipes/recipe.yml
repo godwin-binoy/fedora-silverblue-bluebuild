@@ -2,29 +2,34 @@
 name: fedora-silverblue-bluebuild
 description: Core Ultra Dynamic HW-Optimized System Engine.
 base-image: ghcr.io/ublue-os/silverblue-main
-image-version: 44
+image-version: latest
 modules:
   - type: files
     files:
       - source: system
         destination: /
+
   - type: dnf
     install:
       packages:
+        # Video acceleration (VA-API / QuickSync)
         - intel-media-driver
+        - libva-intel-driver
         - libva-utils
         - gstreamer1-vaapi
+        - gstreamer1-plugins-bad-free
+        - mesa-va-drivers
+        - ffmpeg
+        # GPU compute
+        - intel-opencl
+        - intel-level-zero-gpu
+        # NPU
+        - intel-npu-driver
+        # Power / thermal (Fedora-native, verified present)
+        - thermald
+        # Diagnostics
         - intel-gpu-tools
         - fastfetch
-        - intel-lpmd
-        - thermald
-        - intel-npu-driver
-        - onevpl-intel-gpu
-        - intel-opencl
-        - powertop
-      skip-unavailable: true
-      skip-broken: true
-      allow-erasing: true
     remove:
       packages:
         - firefox
@@ -33,38 +38,42 @@ modules:
         - yelp
         - gnome-user-docs
         - rygel
+
   - type: kargs
     kargs:
-      - nmi_watchdog=0
-      - nowatchdog
-      - rcutree.rcu_idle_gp_delay=4
+      # CPU power management
       - intel_pstate=active
-      - split_lock_detect=off
+      - intel_idle.max_cstate=10
+      # GPU power saving (i915 — Meteor Lake / Arrow Lake)
+      - i915.enable_psr=1
+      - i915.enable_dc=2
+      - i915.enable_fbc=1
+      - i915.enable_guc=2
+      # IOMMU (full protection, no passthrough)
+      - intel_iommu=on
+      # Security hardening
+      - lockdown=integrity
+      - init_on_alloc=1
+      - init_on_free=1
+      # NVMe power (workaround for buggy drives)
+      - nvme_core.default_ps_max_latency_us=5500
+      # RCU tuning
+      - rcutree.rcu_idle_gp_delay=1
+      # ACPI
+      - acpi.ec_no_wakeup=1
+      # Boot UX
       - quiet
       - splash
-      - workqueue.power_efficient=y
-      - pcie_aspm=auto
-      - iommu=pt
-      - intel_iommu=on
-      - page_alloc.shuffle=1
-      - intel_idle.max_cstate=10
-      - xe.force_probe=7d55,7dd5,7d51,7d67,7d41,e20b,e20d,e202
-      - nvme_core.default_ps_max_latency_us=5500
-      - module_blacklist=i915
-      - cpuidle.governor=teo
-      - rcutree.enable_rcu_lazy=1
-      - acpi.ec_no_wakeup=1
+
   - type: systemd
     system:
       enabled:
         - thermald.service
         - disable-usb-wakeups.service
         - flatpak-automatic-upgrade.timer
-        - powertop.service
-        - cpupower-powersave.service
       masked:
-        - intel-lpmd.service
         - irqbalance.service
+
   - type: default-flatpaks
     configurations:
       - notify: false
@@ -75,4 +84,5 @@ modules:
           - com.brave.Browser
           - com.mattjakeman.ExtensionManager
           - org.freedesktop.Platform.VAAPI.Intel
+
   - type: signing
