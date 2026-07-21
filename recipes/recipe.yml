@@ -9,6 +9,10 @@ modules:
       - source: system
         destination: /
 
+  - type: script
+    scripts:
+      - rpmfusion.sh
+
   - type: dnf
     install:
       packages:
@@ -17,19 +21,17 @@ modules:
         - libva-intel-driver
         - libva-utils
         - gstreamer1-vaapi
-        - gstreamer1-plugins-bad-free
-        - mesa-va-drivers
+        # Full multimedia (from RPMFusion)
         - ffmpeg
-        # GPU compute
+        # GPU compute (OpenCL + Level Zero)
         - intel-opencl
-        - intel-level-zero-gpu
+        - intel-level-zero
         # NPU
         - intel-npu-driver
-        # Power / thermal (Fedora-native, verified present)
-        - thermald
         # Diagnostics
         - intel-gpu-tools
         - fastfetch
+      skip-unavailable: true
     remove:
       packages:
         - firefox
@@ -55,7 +57,7 @@ modules:
       - lockdown=integrity
       - init_on_alloc=1
       - init_on_free=1
-      # NVMe power (workaround for buggy drives)
+      # NVMe power
       - nvme_core.default_ps_max_latency_us=5500
       # RCU tuning
       - rcutree.rcu_idle_gp_delay=1
