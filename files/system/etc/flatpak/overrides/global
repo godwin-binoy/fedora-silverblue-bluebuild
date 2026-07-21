@@ -1,10 +1,8 @@
 [Context]
-devices=dri;shm;input;
+devices=dri;shm;
 sockets=wayland;pulseaudio;
-filesystems=/dev/accel:rw;/etc/OpenCL:ro;
 
 [Environment]
 LIBVA_DRIVER_NAME=iHD
 VDPAU_DRIVER=va_gl
 MESA_GLTHREAD=true
-BRAVE_FLAGS="--enable-features=VaapiVideoDecoder,VaapiVideoEncoder,MhtmlFromFile --disable-features=UseChromeOSDirectVideoDecoder --ignore-gpu-blocklist --enable-gpu-rasterization --enable-zero-copy --enable-features=DiscardEmptyTabs,QuickAnswers"

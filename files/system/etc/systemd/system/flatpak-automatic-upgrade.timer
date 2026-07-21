@@ -2,7 +2,7 @@
 Description=Daily Flatpak Automation Pipeline Timer
 
 [Timer]
-OnCalendar=daily
+OnCalendar=weekly
 Persistent=true
 
 [Install]

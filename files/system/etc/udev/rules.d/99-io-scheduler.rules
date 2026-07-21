@@ -1,2 +1,0 @@
-ACTION=="add|change", SUBSYSTEM=="block", KERNEL=="nvme*", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="none"
-ACTION=="add", SUBSYSTEM=="pci", DRIVER=="nvme", ATTR{power/control}="auto"
