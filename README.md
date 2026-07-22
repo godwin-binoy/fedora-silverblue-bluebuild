@@ -1,10 +1,10 @@
-# Fedora Silverblue - Intel Core Ultra Engine
+# Fedora Silverblue — Intel Core Ultra Engine
 
 [![bluebuild build badge](https://github.com/godwin-binoy/fedora-silverblue-bluebuild/actions/workflows/build.yml/badge.svg)](https://github.com/godwin-binoy/fedora-silverblue-bluebuild/actions/workflows/build.yml)
 
 Custom hardware-optimized **Fedora Silverblue** image built with [BlueBuild](https://blue-build.org/) for **Intel Core Ultra** (Meteor Lake, Arrow Lake, Lunar Lake) platforms.
 
-> Uses the kernel's native driver selection — **i915** for Meteor Lake/Arrow Lake, **xe** for Lunar Lake. No driver blacklisting or force-probing.
+> Uses the **i915** driver — the kernel default for all current Intel Core Ultra platforms. The experimental `xe` driver can be manually enabled via `force_probe` if desired.
 
 ---
 
@@ -12,44 +12,52 @@ Custom hardware-optimized **Fedora Silverblue** image built with [BlueBuild](htt
 
 | Layer | Package | Purpose |
 |---|---|---|
-| VA-API (primary) | `intel-media-driver` | H.264/HEVC/VP9/AV1 decode+encode via iHD |
+| VA-API (primary) | `libva-intel-media-driver` | H.264/HEVC/VP9/AV1 decode+encode via iHD |
 | VA-API (fallback) | `libva-intel-driver` | Legacy i965 driver for older apps |
 | GStreamer | `gstreamer1-vaapi` | Hardware-accelerated media pipeline |
 | FFmpeg | `ffmpeg` (RPMFusion) | Full codec support with VA-API |
 | OpenCL | `intel-opencl` | GPU compute workloads |
 | Level Zero | `intel-level-zero` | oneAPI / SYCL GPU compute |
 | NPU | `intel-npu-driver` | AI/ML inference on Intel NPU |
-| Flatpak GPU | Global override | `devices=all` + PipeWire for sandboxed apps |
+| Flatpak GPU | Global override | `devices=dri;shm` + PipeWire for sandboxed apps |
 
-### GPU Kernel Parameters (i915)
+### GPU Defaults (i915 — Meteor Lake+)
 
-| Parameter | Effect |
-|---|---|
-| `i915.enable_guc=2` | Offloads GPU scheduling to GuC microcontroller |
-| `i915.enable_dc=2` | DC5/DC6 display power states (−0.5–1.5W idle) |
-| `i915.enable_fbc=1` | Frame Buffer Compression (reduces memory bandwidth) |
-| `i915.enable_psr=1` | Panel Self Refresh (GPU idles on static content) |
+The kernel automatically selects optimal defaults for Meteor Lake and newer:
 
+| Parameter | Default | Effect |
+|---|---|---|
+| `i915.enable_guc` | `3` | GuC submission + HuC firmware (GPU scheduling offload) |
+| `i915.enable_psr` | `-1` (auto) | PSR2 on supported eDP panels (GPU idles on static content) |
+| `i915.enable_dc` | `-1` (auto) | Best available DC power state |
+| `i915.enable_fbc` | `-1` (auto) | Frame Buffer Compression enabled |
+
+> These defaults are **not overridden** in this image. Setting them explicitly can only downgrade or be redundant.
 > If you experience screen flickering: `rpm-ostree kargs --append=i915.enable_psr=0`
 
 ---
 
 ## Power & Thermal
 
-- **tuned-ppd** — Fedora's native power profile daemon (default since F41)
+- **tuned-ppd** — Fedora's power profile daemon with tuned backend (default since F41)
 - **intel-lpmd** — Enabled natively by `fedora-release-silverblue`
 - **thermald** — Hardware thermal feedback profiles
 - **intel_idle.max_cstate=10** — Deepest CPU sleep states
 - **ZRAM zstd:1** — Compressed swap at >500 MB/s per core
-- **vm.swappiness=100** — Proactive ZRAM usage
+- **vm.swappiness=80** — Proactive but balanced ZRAM usage
+- **USB/PCIe wakeup disabled** — Reduces spurious wake cycles from sleep
+- **Runtime PM** — Scoped to Intel PCI devices only (avoids NVMe/GPU instability)
+- **NVMe power** — `default_ps_max_latency_us=5500` reduces idle power ~0.5W
+- **RCU tuning** — `rcu_idle_gp_delay=1` reduces timer wakeups
+- **ACPI EC** — `ec_no_wakeup=1` reduces spurious embedded controller wakeups
 
 ## Security
 
 - `intel_iommu=on` — Full DMA protection (no passthrough)
-- `lockdown=integrity` — Kernel runtime modification blocked
 - `init_on_alloc=1` / `init_on_free=1` — Memory zeroing
 - AES-NI / SHA-NI hardware crypto acceleration
 - Sigstore Cosign image signing
+- Flatpak sandboxing with minimal device access (`dri;shm` only)
 
 ---
 
@@ -94,7 +102,7 @@ vainfo                          # VA-API profiles
 vulkaninfo --summary            # Vulkan GPU
 glxinfo | grep "OpenGL renderer" # OpenGL
 ls /dev/accel/                  # NPU
-lspci -k | grep -A3 "VGA"      # GPU driver
+lspci -k | grep -A3 "VGA"      # GPU driver (should show i915)
 grep -i aes /proc/crypto        # AES-NI
 zramctl                         # ZRAM status
 ffmpeg -hwaccels                # FFmpeg HW accel
@@ -107,4 +115,12 @@ ffmpeg -hwaccels                # FFmpeg HW accel
 | Screen flickering | `rpm-ostree kargs --append=i915.enable_psr=0` |
 | No VA-API in Firefox | Check `about:config` settings above |
 | Audio pops/clicks | Increase `session.suspend-timeout-seconds` in WirePlumber |
-| Build fails | Check Actions logs; verify `@v1.11.1` pin |
+| Build fails | Check Actions logs; verify `@v1.12.0` pin |
+| RPMFusion install fails | Mirrors use Anubis bot-protection; script retries 3x automatically |
+
+## Updates
+
+- Base image is pinned to **Fedora 44** for reproducibility
+- A monthly workflow checks for new Fedora releases and opens a PR
+- `rpm-ostreed` is configured with `AutomaticUpdatePolicy=stage` — updates download in background and apply on reboot
+- Flatpak updates run weekly (Saturday 10:00, with 6h random delay)

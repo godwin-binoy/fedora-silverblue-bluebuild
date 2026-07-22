@@ -1,6 +1,6 @@
 [Context]
-devices=dri;shm;all;
-sockets=wayland;pulseaudio;pipewire;
+devices=dri;shm;
+sockets=wayland;pipewire;
 filesystems=xdg-run/pipewire;
 
 [Environment]

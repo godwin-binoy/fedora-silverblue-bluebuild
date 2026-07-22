@@ -1,7 +1,16 @@
-ACTION=="add", SUBSYSTEM=="pci", ATTR{power/control}="auto"
+# Intel PCI devices — runtime PM (scoped to Intel vendor 0x8086)
+ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x8086", ATTR{power/control}="auto"
+
+# USB devices — runtime PM
 ACTION=="add", SUBSYSTEM=="usb", TEST=="power/control", ATTR{power/control}="auto"
 ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="04f2", TEST=="power/autosuspend", ATTR{power/autosuspend}="1", ATTR{power/control}="auto"
 ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="0bda", TEST=="power/autosuspend", ATTR{power/autosuspend}="1", ATTR{power/control}="auto"
+
+# Realtek NIC (common in Core Ultra laptops)
 ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10ec", ATTR{device}=="0xb852", ATTR{power/control}="auto"
+
+# NVMe — none scheduler (optimal for NVMe)
 ACTION=="add|change", KERNEL=="nvme*", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="none"
+
+# NVMe power management
 ACTION=="add", SUBSYSTEM=="pci", DRIVER=="nvme", ATTR{power/control}="auto"

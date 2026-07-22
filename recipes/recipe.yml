@@ -1,8 +1,10 @@
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
+version: 1
 name: fedora-silverblue-bluebuild
-description: Core Ultra Dynamic HW-Optimized System Engine.
+description: Hardware-optimized Fedora Silverblue for Intel Core Ultra (Meteor Lake / Arrow Lake / Lunar Lake)
 base-image: ghcr.io/ublue-os/silverblue-main
-image-version: latest
+image-version: "44"
+
 modules:
   - type: files
     files:
@@ -16,22 +18,21 @@ modules:
   - type: dnf
     install:
       packages:
-        # Video acceleration (VA-API / QuickSync)
-        - intel-media-driver
+        # Video acceleration (VA-API / QuickSync) — Fedora official
+        - libva-intel-media-driver
         - libva-intel-driver
         - libva-utils
         - gstreamer1-vaapi
         # Full multimedia (from RPMFusion)
         - ffmpeg
-        # GPU compute (OpenCL + Level Zero)
+        # GPU compute (verified exist in Fedora 44)
         - intel-opencl
         - intel-level-zero
-        # NPU
+        # NPU (verified exists in Fedora 44)
         - intel-npu-driver
         # Diagnostics
         - intel-gpu-tools
         - fastfetch
-      skip-unavailable: true
     remove:
       packages:
         - firefox
@@ -46,23 +47,21 @@ modules:
       # CPU power management
       - intel_pstate=active
       - intel_idle.max_cstate=10
-      # GPU power saving (i915 — Meteor Lake / Arrow Lake)
-      - i915.enable_psr=1
-      - i915.enable_dc=2
-      - i915.enable_fbc=1
-      - i915.enable_guc=2
-      # IOMMU (full protection, no passthrough)
+      # GPU: NO i915.* overrides — Meteor Lake defaults are optimal
+      # (enable_guc=3, enable_psr=auto/PSR2, enable_dc=auto, enable_fbc=auto)
+      # IOMMU (full DMA protection, no passthrough)
       - intel_iommu=on
       # Security hardening
-      - lockdown=integrity
       - init_on_alloc=1
       - init_on_free=1
-      # NVMe power
+      # NVMe power (reduces idle power ~0.5W)
       - nvme_core.default_ps_max_latency_us=5500
-      # RCU tuning
+      # RCU tuning (reduces timer wakeups)
       - rcutree.rcu_idle_gp_delay=1
-      # ACPI
+      # ACPI (reduces spurious EC wakeups)
       - acpi.ec_no_wakeup=1
+      # THP (kernel-level, more reliable than tmpfiles.d)
+      - transparent_hugepage=madvise
       # Boot UX
       - quiet
       - splash
@@ -85,6 +84,5 @@ modules:
           - org.gnome.Loupe
           - com.brave.Browser
           - com.mattjakeman.ExtensionManager
-          - org.freedesktop.Platform.VAAPI.Intel
 
   - type: signing

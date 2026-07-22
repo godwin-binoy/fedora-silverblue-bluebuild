@@ -5,6 +5,6 @@ Wants=network-online.target
 
 [Service]
 Type=oneshot
-ExecCondition=/bin/sh -c 'nmcli -t -f CONNECTED,METERED device 2>/dev/null | grep -q "^yes:yes" && exit 1 || exit 0'
+ExecCondition=/bin/sh -c 'nmcli -t -f GENERAL.STATE,GENERAL.METERED device show 2>/dev/null | grep -q "connected:yes" && exit 1 || exit 0'
 ExecStart=/usr/bin/flatpak update --system --noninteractive -y
 ExecStartPost=/usr/bin/flatpak uninstall --system --unused --noninteractive -y
