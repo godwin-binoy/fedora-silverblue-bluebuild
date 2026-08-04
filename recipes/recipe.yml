@@ -69,7 +69,7 @@ modules:
         - thermald.service
         - tuned.service
         - systemd-oomd.service
-        - intel-lpmd.service
+        - intel_lpmd.service
         - fstrim.timer
         - flatpak-automatic-upgrade.timer
       masked: []
