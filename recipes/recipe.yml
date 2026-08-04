@@ -33,8 +33,9 @@ modules:
         - libcamera
         - libcamera-tools
         - pipewire-plugin-libcamera
+        - intel-vsc-firmware
         # OneVPL runtime for QuickSync on Meteor Lake+
-        - vpl-gpu-rt
+        - intel-vpl-gpu-rt
         # Diagnostics
         - intel-gpu-tools
         - fastfetch
