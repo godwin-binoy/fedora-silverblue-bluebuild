@@ -20,7 +20,6 @@ modules:
       packages:
         # Video acceleration (VA-API / QuickSync) — Fedora official
         - libva-intel-media-driver
-        - libva-intel-driver
         - libva-utils
         - gstreamer1-vaapi
         # Full multimedia (from RPMFusion)
@@ -30,6 +29,12 @@ modules:
         - intel-level-zero
         # NPU (verified exists in Fedora 44)
         - intel-npu-driver
+        # Camera / MIPI support for Core Ultra
+        - libcamera
+        - libcamera-tools
+        - pipewire-plugin-libcamera
+        # OneVPL runtime for QuickSync on Meteor Lake+
+        - vpl-gpu-rt
         # Diagnostics
         - intel-gpu-tools
         - fastfetch
@@ -46,20 +51,9 @@ modules:
     kargs:
       # CPU power management
       - intel_pstate=active
-      - intel_idle.max_cstate=10
-      # GPU: NO i915.* overrides — Meteor Lake defaults are optimal
-      # (enable_guc=3, enable_psr=auto/PSR2, enable_dc=auto, enable_fbc=auto)
-      # IOMMU (full DMA protection, no passthrough)
+      # IOMMU (full DMA protection with pass-through to avoid I/O overhead)
       - intel_iommu=on
-      # Security hardening
-      - init_on_alloc=1
-      - init_on_free=1
-      # NVMe power (reduces idle power ~0.5W)
-      - nvme_core.default_ps_max_latency_us=5500
-      # RCU tuning (reduces timer wakeups)
-      - rcutree.rcu_idle_gp_delay=1
-      # ACPI (reduces spurious EC wakeups)
-      - acpi.ec_no_wakeup=1
+      - iommu=pt
       # THP (kernel-level, more reliable than tmpfiles.d)
       - transparent_hugepage=madvise
       # Boot UX
@@ -70,10 +64,12 @@ modules:
     system:
       enabled:
         - thermald.service
-        - disable-usb-wakeups.service
+        - tuned.service
+        - systemd-oomd.service
+        - intel-lpmd.service
+        - fstrim.timer
         - flatpak-automatic-upgrade.timer
-      masked:
-        - irqbalance.service
+      masked: []
 
   - type: default-flatpaks
     configurations:

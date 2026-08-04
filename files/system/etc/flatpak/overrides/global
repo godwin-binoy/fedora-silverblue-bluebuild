@@ -1,6 +1,6 @@
 [Context]
 devices=dri;shm;
-sockets=wayland;pipewire;
+sockets=wayland;fallback-x11;ipc;pipewire;
 filesystems=xdg-run/pipewire;
 
 [Environment]
