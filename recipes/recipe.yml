@@ -36,6 +36,8 @@ modules:
         - intel-vsc-firmware
         # OneVPL runtime for QuickSync on Meteor Lake+
         - intel-vpl-gpu-rt
+        # Power management
+        - intel-lpmd
         # Diagnostics
         - intel-gpu-tools
         - fastfetch
