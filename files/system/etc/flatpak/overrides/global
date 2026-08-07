@@ -1,8 +1,9 @@
 [Context]
 devices=dri;shm;
-sockets=wayland;fallback-x11;ipc;pipewire;
+sockets=wayland;fallback-x11;
+shared=ipc;
 filesystems=xdg-run/pipewire;
 
 [Environment]
 LIBVA_DRIVER_NAME=iHD
-MOZ_ENABLE_WAYLAND=1
+OZONE_PLATFORM_HINT=auto

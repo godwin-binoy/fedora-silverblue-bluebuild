@@ -39,7 +39,7 @@ modules:
         # Power management
         - intel-lpmd
         # Diagnostics
-        - intel-gpu-tools
+        - igt-gpu-tools
         - fastfetch
     remove:
       packages:
